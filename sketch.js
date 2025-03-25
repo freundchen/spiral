@@ -2,21 +2,21 @@ let points = []; // Array to store point information
 let numPoints = 3000; // Number of points to draw
 let goldenAngle = 137.5; // The golden angle in degrees
 let distanceIncrement = 0.1; // Start with minimum distance
-let shapeSize = 5; // Size of each square
+let shapeSize = 80; // Changed from 5 to 30 (50% of max 60)
 let centerX, centerY; // Center of the canvas
 let angularOffset = 0; // Initial angular offset in degrees
-let shapeType = 'square'; // Can be 'square', 'circle', or 'triangle'
-let drawStyle = 'filled'; // Can be 'filled', 'outline', or 'both'
+let shapeType = 'circle'; // Changed from 'square' to 'circle'
+let drawStyle = 'outline'; // Changed from 'filled' to 'outline'
 
 // Animation variables
 let isAnimating = true;
-let animationSpeed = 0.01;
+let animationSpeed = 0.005;
 let minDistance = 0.1;
 let maxDistance = 1.0;
 let animationDirection = 1;
 
 // Rotation variables
-let rotationSpeed = 0.2; // Degrees per frame
+let rotationSpeed = 1.5; // Degrees per frame
 let squareRotationOffset = 0; // Additional rotation for squares
 
 // Color variables
@@ -131,10 +131,10 @@ function setup() {
   pointsSlider.parent(countGroup);
   pointsSlider.input(() => { numPoints = pointsSlider.value(); });
 
-  // Shape Size Control
+  // Shape Size Control - double the range to 120
   let sizeGroup = createControlGroup('Shape Size');
   sizeGroup.parent(controlsDiv);
-  let sizeSlider = createSlider(1, 60, shapeSize, 1);
+  let sizeSlider = createSlider(1, 120, shapeSize, 1);
   sizeSlider.parent(sizeGroup);
   sizeSlider.input(() => { shapeSize = sizeSlider.value(); });
 
@@ -166,7 +166,7 @@ function setup() {
   shapeSelect.option('Square', 'square');
   shapeSelect.option('Circle', 'circle');
   shapeSelect.option('Triangle', 'triangle');
-  shapeSelect.selected(shapeType);
+  shapeSelect.selected('circle'); // Change default selection
   shapeSelect.parent(shapeTypeGroup);
   shapeSelect.changed(() => { shapeType = shapeSelect.value(); });
 
@@ -185,10 +185,10 @@ function setup() {
     radio.attribute('type', 'radio');
     radio.attribute('name', 'drawStyle');
     radio.attribute('value', value);
-    if (drawStyle === value) radio.attribute('checked', true);
+    if (value === 'outline') radio.attribute('checked', true); // Change default checked state
 
     label.child(radio);
-    label.html(labelText, true); // Append text after the radio button
+    label.html(labelText, true);
     return label;
   }
 
@@ -227,8 +227,7 @@ function draw() {
   fill(0, 0, 100);
   noStroke();
   textSize(14);
-  text(`Distance: ${distanceIncrement.toFixed(3)} | Shapes: ${numPoints} | Type: ${shapeType}`, 10, height - 10);
-  text(`Click canvas to toggle animation`, 10, height - 30);
+  text(`Click canvas to toggle animation`, 10, height - 16);
 }
 
 function updateDistanceAnimation() {
@@ -273,8 +272,8 @@ function calculatePoints() {
     let hue = (hueOffset + map(distFromCenter, 0, width / 2, 0, hueRange)) % 360;
     let saturation = 90;
     let brightness = 100;
-    let fillAlpha = 10;
-    let strokeAlpha = 30;
+    let fillAlpha = 5;
+    let strokeAlpha = 40;
 
     // Create the appropriate shape object based on shapeType
     let shape;
