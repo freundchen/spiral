@@ -21,8 +21,13 @@ let squareRotationOffset = 0; // Additional rotation for squares
 
 // Color variables
 let hueOffset = 0;
-let hueSpeed = 0.1;
+let hueSpeed = 0.4;
 let hueRange = 60; // Controls how much the hue varies with distance (default 60 degrees)
+
+// Modify the canvas size variables
+const CANVAS_HEIGHT = 600; // Fixed height
+const CANVAS_MAX_WIDTH = 1200;
+const CANVAS_MIN_WIDTH = 400;
 
 // Base Shape class
 class Shape {
@@ -100,21 +105,13 @@ class Triangle extends Shape {
 }
 
 function setup() {
-  let cnv = createCanvas(600, 600);
-  centerX = width / 2;
-  centerY = height / 2;
+  // Calculate canvas width based on window width
+  canvasSize = constrain(windowWidth - 40, CANVAS_MIN_WIDTH, CANVAS_MAX_WIDTH);
 
-  // Set color mode to HSB for easier color manipulation
-  colorMode(HSB, 360, 100, 100, 100);
-  background(220, 10, 10);
-  loop();
-
-  // Add mouse click handler specifically for the canvas
-  cnv.mousePressed(toggleAnimation);
-
-  // Create a container for all controls
+  // Create controls first
   let controlsDiv = createDiv();
   controlsDiv.class('controls-container');
+  controlsDiv.style('width', `${canvasSize}px`);
 
   // Helper function to create a control container
   function createControlGroup(title) {
@@ -203,6 +200,19 @@ function setup() {
       drawStyle = e.target.value;
     }
   });
+
+  // Create canvas after controls
+  let cnv = createCanvas(canvasSize, CANVAS_HEIGHT);
+  centerX = width / 2;
+  centerY = height / 2;
+
+  // Set color mode to HSB for easier color manipulation
+  colorMode(HSB, 360, 100, 100, 100);
+  background(220, 10, 10);
+  loop();
+
+  // Add mouse click handler specifically for the canvas
+  cnv.mousePressed(toggleAnimation);
 }
 
 function draw() {
@@ -309,4 +319,17 @@ function toggleAnimation() {
   } else {
     noLoop();
   }
+}
+
+function windowResized() {
+  // Recalculate canvas width
+  canvasSize = constrain(windowWidth - 40, CANVAS_MIN_WIDTH, CANVAS_MAX_WIDTH);
+  resizeCanvas(canvasSize, CANVAS_HEIGHT);
+
+  // Update center points
+  centerX = width / 2;
+  centerY = height / 2;
+
+  // Update controls container width
+  select('.controls-container').style('width', `${canvasSize}px`);
 }
